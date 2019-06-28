@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Scenes/Character.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Scripts/player.gd" type="Script" id=2]
+[ext_resource path="res://Scenes/Characters/Players/Armatures/Armature-M.tscn" type="PackedScene" id=3]
+
+[node name="Character" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+
+[node name="MeshInstance" parent="." index="0"]
+visible = false
+
+[node name="Armature" parent="." index="2" instance=ExtResource( 3 )]
+transform = Transform( 0.5, 0, 0, 0, -2.18557e-008, -0.5, 0, 0.5, -2.18557e-008, 0, 0, 0 )
+
+[node name="Camera" type="Camera" parent="." index="3"]
+transform = Transform( -0.999977, 0, -0.00673543, -0.00116959, 0.984808, 0.173644, 0.0066331, 0.173648, -0.984785, 0, 5, -8.02837 )
