@@ -1,6 +1,6 @@
 extends Camera
 
-export var mouse_sensitivity = 1200
+export var mouse_sensitivity = 800
 onready var Player = get_parent()
 
 func _enter_tree():
@@ -24,3 +24,4 @@ func look_up_down(rot):
 	var new_rotation = get_rotation() + Vector3(rot,0,0)
 	new_rotation.x = clamp(new_rotation.x, PI / -2, PI / 2)
 	return new_rotation
+

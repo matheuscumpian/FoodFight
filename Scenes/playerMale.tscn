@@ -10,8 +10,14 @@ script = ExtResource( 2 )
 [node name="MeshInstance" parent="." index="0"]
 visible = false
 
-[node name="Armature" parent="." index="2" instance=ExtResource( 3 )]
+[node name="Armature" parent="." index="1" instance=ExtResource( 3 )]
 transform = Transform( 0.5, 0, 0, 0, -2.18557e-008, -0.5, 0, 0.5, -2.18557e-008, 0, 0, 0 )
 
-[node name="Camera" type="Camera" parent="." index="3"]
+[node name="Camera" type="Camera" parent="." index="2"]
 transform = Transform( -0.999977, 0, -0.00673543, -0.00116959, 0.984808, 0.173644, 0.0066331, 0.173648, -0.984785, 0, 5, -8.02837 )
+
+[node name="CollisionShape" parent="." index="3"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-008, -1, 0, 1, -4.37114e-008, 0, 0.807252, 0 )
+
+[node name="Foward" parent="." index="4"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.11504, 0.7 )

@@ -1220,6 +1220,12 @@ data = {
 "type": "output"
 }, {
 "filter": [  ],
+"from": "Idle",
+"id": "Idle",
+"position": Vector2( 42, 119 ),
+"type": "animation"
+}, {
+"filter": [  ],
 "from": "Run",
 "id": "Running",
 "position": Vector2( 42, 225 ),
@@ -1230,11 +1236,5 @@ data = {
 "id": "Move",
 "position": Vector2( 284, 148 ),
 "type": "blend2"
-}, {
-"filter": [  ],
-"from": "Idle",
-"id": "Idle",
-"position": Vector2( 42, 119 ),
-"type": "animation"
 } ]
 }

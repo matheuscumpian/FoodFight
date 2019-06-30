@@ -1,55 +1,70 @@
-extends KinematicBody
+extends "res://Scripts/Character.gd"
 
 
-
-#movement
-var vel = Vector3()
-var dir = Vector3()
-var facing_direction = 0
-
-const MAX_SPEED = 10
-const ACCEL = 5
-const DECCEL = 10 
-const JUMP_SPEED = 15
-const GRAVITY = -45
-
-#Animation
-const BLEND_MINIMUM = 45.4
-const RUN_BLEND_AMOUNT = 0.1
-const IDLE_BLEND_AMOUNT = 5
+var gravity = Vector3(0,-12,0)
+var speed = 10
+var jump_speed = 7
+var spin = 0.1
+var can_jump = false
+const RUN_BLEND_AMOUNT = 0.05
+const IDLE_BLEND_AMOUNT = 0.05
+const BLEND_MINIMUM = 1 
 var move_state = 0
-
-
+var looking = 0
+var velocity = Vector3()
 
 func _physics_process(delta):
-	move(delta)
-	face_foward()
+	velocity += gravity * delta
+	
+	get_input()
+	velocity = move_and_slide(velocity, Vector3.UP)
+	if can_jump and is_on_floor():
+		velocity.y = jump_speed
+		
 	animate()
+	change_lookDirection()
+	
+
+func change_lookDirection():
+
+	$Armature.rotation.y = looking
+
 	pass
+func get_input():
+
+	var vy = velocity.y
+
+	velocity = Vector3()
 	
-func move(delta):
-	var movement_dir = get_2d_movement()
-	var camera_xform = $Camera.get_global_transform()
+	if is_on_floor():
+		if Input.is_action_pressed("foward") and not Input.is_action_pressed("back"):
+			velocity += transform.basis.z * speed
+			looking = 0
+		if Input.is_action_pressed("back") and not Input.is_action_pressed("foward"):
+			velocity -= transform.basis.z * speed 
+			looking = PI
+		if Input.is_action_pressed("right") and not Input.is_action_pressed("left"):
+			velocity -= transform.basis.x * speed 
+			looking = PI * 1.5
+		if Input.is_action_pressed("left") and not Input.is_action_pressed("right"):
+			velocity += transform.basis.x * speed
+			looking = PI * 0.5
 	
-	dir = Vector3(0,0,0)
+	can_jump = false 
+	if Input.is_action_just_pressed("jump"):
+		can_jump = true
+		
+	velocity.y = vy
 	
-	dir += camera_xform.basis.z.normalized() * movement_dir.y
-	dir += camera_xform.basis.x.normalized() * movement_dir.x
+
+func _unhandled_input(event):
+	if event is InputEventMouseMotion:
+		rotate_y(-lerp(0,spin,event.relative.x / 10))
 	
-	dir = move_vertically(dir, delta)
-	vel = h_accel(dir, delta)
-	
-	move_and_slide(vel, Vector3.UP)
-	
-func face_foward():
-	$Armature.rotation.y = facing_direction
-	pass
 	
 func animate():
-	
 	var animate = $Armature/AnimationTreePlayer
-	print("TAMANHO DO VETOR: " + str(vel.length()))
-	if vel.length() > BLEND_MINIMUM:
+	if abs(velocity.z) > BLEND_MINIMUM:
 		move_state += RUN_BLEND_AMOUNT
 	else:
 		move_state -= IDLE_BLEND_AMOUNT
@@ -58,51 +73,5 @@ func animate():
 		
 	animate.blend2_node_set_amount("Move", move_state)
 	
-func get_2d_movement():
-	var movement2D = Vector2()
-	if Input.is_action_pressed("foward") and not Input.is_action_pressed("back"):
-		movement2D.y = -1
-		facing_direction = 0
-	if Input.is_action_pressed("back") and not Input.is_action_pressed("foward"):
-		movement2D.y = 1
-		facing_direction = PI
-	if Input.is_action_pressed("left") and not Input.is_action_pressed("right"):
-		movement2D.x = -1
-		facing_direction = PI / 2
-	if Input.is_action_pressed("right") and not Input.is_action_pressed("left"):
-		movement2D.x = 1
-		facing_direction = PI * 1.5
-	return movement2D.normalized()	
-	
-func move_vertically(dir, delta):
-	vel.y += GRAVITY * delta
-
-	if Input.is_action_just_pressed("jump") and is_on_floor():
-		vel.y = JUMP_SPEED
-	elif is_on_floor():
-		vel.y = GRAVITY
-
-	dir.y = 0
-	dir = dir.normalized()
-	return dir
 
 
-func h_accel(dir, delta):
-	var vel_2D = vel
-	vel_2D.y = 0
-
-	var target = dir
-	target *= MAX_SPEED
-
-	var accel
-	if dir.dot(vel_2D) > 0:
-		accel = ACCEL
-	else:
-		accel = DECCEL
-
-	vel_2D = vel_2D.linear_interpolate(target, accel * delta)
-
-	vel.x = vel_2D.x
-	vel.z = vel_2D.z
-
-	return vel
